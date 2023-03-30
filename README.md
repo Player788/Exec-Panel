@@ -18,11 +18,11 @@ local Window = Library:Window{
 	Hotkey = {
 		Key = <Enum.KeyCode>, 
 		Enabled = <boolean>
-	}
+	},
 	Saves = {
 		FileId = <string>,
 		Enabled = <boolean>
-	}
+	},
   KeySystem = {
 			Enabled = <boolean>,
 			External = <boolean>,
@@ -176,7 +176,7 @@ Section:AddDropDown{
 #### Methods
 
 ```lua
-Dropdown:Refresh(<list : table>, <clear : boolean>)
+Dropdown:Refresh(<options : table>, <clear : boolean>)
 Dropdown:Remove(<index>)
 Dropdown:Set(<index>)
 ```
@@ -196,7 +196,7 @@ Section:AddColor{
 #### Methods
 
 ```lua
-Colorpicker:Set(<Color3>)
+Colorpicker:Set(<color3>)
 ```
 
 ***
@@ -208,13 +208,13 @@ Colorpicker:Set(<Color3>)
 * Flags are used as global variables to store (Values, Tables, etc.) Toggles, Sliders, Dropdowns & binds. Adding a flag value will automatically save its configs. Example:
 
 ```lua
-Section:AddToggle({
+Section:AddToggle{
     Name = "Toggle",
     Default = true,
     Flag = "toggle"
-})
+}
 ```
-* Use Library:Get(<Flag : string>) to get an element's value
+* Use `Library:Get(<Flag : string>)` to get an element's value
 Example:
 
 ```lua

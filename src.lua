@@ -1,4 +1,4 @@
-_G.Version = "1A"
+_G.Version = "1B"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -1122,9 +1122,6 @@ function Library:Window(Table)
 				Callback = function(v)
 					_G.CircleThickness = v
 				end}
-			for i,v in pairs(Elements) do
-				print(v)
-			end
 			Tween(Main.UIScroll, "CanvasPosition", Vector2.new(0, Main.UIScroll.UIListLayout.AbsoluteContentSize.Y-Main.UIScroll.Aimbot.AbsoluteSize.Y))
 		end}
 	end)

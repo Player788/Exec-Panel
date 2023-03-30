@@ -1,4 +1,4 @@
-_G.Version = "1B"
+_G.Version = "1C"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -1096,7 +1096,7 @@ function Library:Window(Table)
 					_G.CircleVisible = v
 				end,}
 			aimbot:AddDropdown{
-				Options = {"Head", "R15 - UpperTorso", "R6 - Torso"},
+				Options = {"Head", "HumanoidRootPart"},
 				Default = "Head",
 				Name = "AimPart",
 				Callback = function(Opt)

@@ -23,11 +23,11 @@ local Window = Library:Window{
 		FileId = <string>,
 		Enabled = <boolean>
 	},
-  KeySystem = {
-			Enabled = <boolean>,
-			External = <boolean>,
-			Key = "", -- URL of raw site if External is true.
-		},
+	KeySystem = {
+		Enabled = <boolean>,
+		External = <boolean>,
+		Key = "", -- URL of raw site if External is true.
+	},
 	Sounds = <boolean>
 }
 ```

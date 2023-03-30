@@ -221,8 +221,6 @@ Example:
 print(Library:Get(<Flag : string>).Value)
 ```
 
-#### Methods
-
 ### Window Methods
 ```lua
 Window:Save()

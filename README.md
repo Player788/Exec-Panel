@@ -220,13 +220,13 @@ Example:
 ```lua
 print(Library:Get(<Flag : string>).Value)
 ```
-
+***
 ### Window Methods
 ```lua
 Window:Save()
 Window:Load() -- Always add at last or in a button
 ```
-
+***
 ### Library Methods
 
 ```lua

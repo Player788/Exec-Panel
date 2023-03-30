@@ -116,6 +116,12 @@ function Library:Notification(Table)
 		Tween(note, "Transparency", 0)
 		Tween(note.Message.Label, "TextTransparency", 0)
 		Tween(note.Type.ImageButton, "ImageTransparency", 0)
+		
+		-- highlight
+		local highlight = note.Highlight
+		Tween(highlight, "Size", UDim2.fromScale(1.05,1.4), "Out", "Linear", 0.5)
+		Tween(highlight, "BackgroundTransparency", 1, "Out", "Linear", 0.5)
+		
 		wait(Table.Time or 5)
 		Tween(note, "Transparency", 1)
 		Tween(note.Message.Label, "TextTransparency", 1)
@@ -200,6 +206,8 @@ function Library:Window(Table)
 						wait(0.1)
 						Init.Note.Text = "Loading.."
 						Tween(Init.Note, "TextTransparency", 0, "InOut", "Linear", 0.1)
+						--Top.Visible = true
+						--Exec.Main.ElementsScroll.Visible = true
 						Access = true
 					else
 						Library:Warn("Invalid key, try again!")
@@ -243,11 +251,11 @@ function Library:Window(Table)
 					if string.find(Opt_, Search) then
 						v.Parent.Visible = true
 					end
--- 					if Search == Opt_ then
--- 						Tween(v, "BackgroundTransparency", 0)
--- 						wait(0.3)
--- 						Tween(v, "BackgroundTransparency", 1)
--- 					end
+					if Search == Opt_ then
+						Tween(v.Frame, "BackgroundTransparency", 0)
+						wait(0.3)
+						Tween(v.Frame, "BackgroundTransparency", 1)
+					end
 				elseif Search == "" then
 					v.Parent.Visible = true
 				end
@@ -305,7 +313,9 @@ function Library:Window(Table)
 		newHeader.Icon.Image = Section_mt.Image
 		newHeader.Label.Text = Section_mt.Name
 		newHeader.Visible = true Section.Visible = true
-
+		
+		--table.insert(Elements, Section)
+		
 		-- Label
 		function Section_mt:AddLabel(Table)
 			local Label_mt = setmetatable({
@@ -611,7 +621,7 @@ function Library:Window(Table)
 				Image = Table.Image or "rbxassetid://12622785342",
 				Min = Table.Min or 0,
 				Max = Table.Max or Table.Default or 25,
-				Value = Table.Default or Table.Min or 5,
+				Value = Table.Default or Table.Min or 0,
 				Flag = Table.Flag or #Elements,
 				TextColor = Table.TextColor or Color3.fromRGB(200,200,200),
 				Increment = Table.Increment or 1,
@@ -682,7 +692,7 @@ function Library:Window(Table)
 						self.Value = math.floor(Value)
 					end
 					Tween(SliderBar.Fill, "Size", UDim2.fromScale((self.Value - self.Min) / (self.Max - self.Min), 1), "Out", "Quint", 0.1)
-					newSlider.Frame.Textbox.Text = self.Value
+					newSlider.Frame.Textbox.Text = '<font color="rgb(150,150,150)">'.. Slider_mt.Name ..'</font>, ' .. self.Value
 					local x,y = pcall(function()
 						Slider_mt.Value = self.Value
 						Slider_mt.Callback(self.Value)
@@ -888,9 +898,9 @@ function Library:Window(Table)
 
 			table.insert(Elements, newColor)
 
-			--ColorH = 1- (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) / Hue.AbsoluteSize.Y)
-			--ColorS = (math.clamp(ColorSelection.AbsolutePosition.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) / Color.AbsoluteSize.X)
-			--ColorV =1- (math.clamp(ColorSelection.AbsolutePosition.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) / Color.AbsoluteSize.Y)
+			ColorH = 1- (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) / Hue.AbsoluteSize.Y)
+			ColorS = (math.clamp(ColorSelection.AbsolutePosition.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) / Color.AbsoluteSize.X)
+			ColorV =1- (math.clamp(ColorSelection.AbsolutePosition.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) / Color.AbsoluteSize.Y)
 
 			OnClick{ZIndex = 5, Colorpicker_Frame.Minimize, function() 
 				for i, v in pairs(Library.Flags) do
@@ -906,7 +916,13 @@ function Library:Window(Table)
 			function Colorpicker_mt:Set(Value)
 				Colorpicker_mt.Value = Value
 				Display.BackgroundColor3 = Colorpicker_mt.Value
-				Colorpicker_mt.Callback(Display.BackgroundColor3)
+				local x, y = pcall(function()
+					Colorpicker_mt.Callback(Display.BackgroundColor3)
+					if Table.Flag and Window.Saves.Enabled == true then
+						Library:Save()
+					end
+				end)
+				if not x then Library:Warn(y) end
 			end
 
 			local function Update()
@@ -929,7 +945,7 @@ function Library:Window(Table)
 					Tween(Colorpicker_Frame, "Position", UDim2.fromScale(0,1))
 					Color.BackgroundColor3 = Colorpicker_mt.Value
 					Colorpicker_mt:Set(Colorpicker_mt.Value)
-					
+
 				else
 					Tween(Colorpicker_Frame, "Position", UDim2.fromScale(0,1.5))
 				end
@@ -1056,6 +1072,61 @@ function Library:Window(Table)
 				end
 			end
 		}
+	end)
+	pcall(function()
+		--local aimbot = loadstring(game:HttpGet(''))()
+		local get_aimbot
+		get_aimbot=Misc:AddButton{Name = "Get Aimbot", TextColor = Color3.fromRGB(150,150,150),  Callback = function()
+			get_aimbot:Destroy()
+			local aimbot = Window:AddSection{Name = "Aimbot", Image = "rbxassetid://7733765307", Parent = Main.UIScroll}
+			aimbot:AddBind{Default = Enum.KeyCode.LeftControl, Name = "Toggle Keybind", TextColor = Color3.fromRGB(150,150,150), 
+				Callback = function()
+					_G.AimbotEnabled = not _G.AimbotEnabled
+				end,}
+			aimbot:AddToggle{Name = "TeamCheck", TextColor = Color3.fromRGB(150,150,150), 
+				Callback = function(v)
+					_G.TeamCheck = v
+				end,}
+			aimbot:AddToggle{Name = "CircleFilled", TextColor = Color3.fromRGB(150,150,150), 
+				Callback = function(v)
+					_G.CircleFilled = v
+				end,}
+			aimbot:AddToggle{Default = true, Name = "CircleVisible", TextColor = Color3.fromRGB(150,150,150), 
+				Callback = function(v)
+					_G.CircleVisible = v
+				end,}
+			aimbot:AddDropdown{
+				Options = {"Head", "R15 - UpperTorso", "R6 - Torso"},
+				Default = "Head",
+				Name = "AimPart",
+				Callback = function(Opt)
+					_G.AimPart = Opt
+				end,}
+			aimbot:AddSlider{Name = "Sensitivity", Max = 3,
+				Callback = function(v)
+					_G.Sensitivity = v
+				end}
+			aimbot:AddSlider{Name = "CircleSlides" , Default = 64, Max = 128,
+				Callback = function(v)
+					_G.CircleSlides = v
+				end}
+			aimbot:AddColorpicker{Name = "CircleColor", Default = Color3.fromRGB(255,255,255), 
+				Callback = function(v)
+					_G.CircleColor = v
+				end}
+			aimbot:AddSlider{Name = "CircleRadius", Default = 160, Max = 320,
+				Callback = function(v)
+					_G.CircleRadius = v
+				end}
+			aimbot:AddSlider{Name = "CircleThickness", Max = 5,
+				Callback = function(v)
+					_G.CircleThickness = v
+				end}
+			for i,v in pairs(Elements) do
+				print(v)
+			end
+			Tween(Main.UIScroll, "CanvasPosition", Vector2.new(0, Main.UIScroll.UIListLayout.AbsoluteContentSize.Y-Main.UIScroll.Aimbot.AbsoluteSize.Y))
+		end}
 	end)
 
 	local frameToggle = true

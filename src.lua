@@ -1074,9 +1074,8 @@ function Library:Window(Table)
 		}
 	end)
 	pcall(function()
-		--local aimbot = loadstring(game:HttpGet(''))()
-		local get_aimbot
-		get_aimbot=Misc:AddButton{Name = "Get Aimbot", TextColor = Color3.fromRGB(150,150,150),  Callback = function()
+		local get_aimbot = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/aimbot.lua'))()
+		get_aimbot = Misc:AddButton{Name = "Get Aimbot", TextColor = Color3.fromRGB(150,150,150),  Callback = function()
 			get_aimbot:Destroy()
 			local aimbot = Window:AddSection{Name = "Aimbot", Image = "rbxassetid://7733765307", Parent = Main.UIScroll}
 			aimbot:AddBind{Default = Enum.KeyCode.LeftControl, Name = "Toggle Keybind", TextColor = Color3.fromRGB(150,150,150), 

@@ -1,4 +1,4 @@
-_G.Version = "1C"
+_G.Version = "1D"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -686,10 +686,10 @@ function Library:Window(Table)
 						return
 					end
 
-					if Slider_mt.Increment > 1 then
-						self.Value = math.clamp(Round(Value, self.Increment), self.Min, self.Max)
+					if self.Increment < 1 then
+						self.Value = string.format("%.".. #tostring(self.Increment)-string.find(tostring(self.Increment) or 0,"%.").."f", Value)
 					else
-						self.Value = math.floor(Value)
+						self.Value = math.clamp(Round(Value, self.Increment), self.Min, self.Max)
 					end
 					Tween(SliderBar.Fill, "Size", UDim2.fromScale((self.Value - self.Min) / (self.Max - self.Min), 1), "Out", "Quint", 0.1)
 					newSlider.Frame.Textbox.Text = '<font color="rgb(150,150,150)">'.. Slider_mt.Name ..'</font>, ' .. self.Value
@@ -1072,57 +1072,6 @@ function Library:Window(Table)
 				end
 			end
 		}
-	end)
-	pcall(function()
-		--local get_aimbot = loadstring(game:HttpGet('https://raw.githubusercontent.com/Player788/rbxscripts/main/aimbot.lua'))()
-		get_aimbot = Misc:AddButton{Name = "Get Aimbot", TextColor = Color3.fromRGB(150,150,150),  Callback = function()
-			get_aimbot:Destroy()
-			local aimbot = Window:AddSection{Name = "Aimbot", Image = "rbxassetid://7733765307", Parent = Main.UIScroll}
-			aimbot:AddBind{Default = Enum.KeyCode.LeftControl, Name = "Toggle Keybind", TextColor = Color3.fromRGB(150,150,150), 
-				Callback = function()
-					_G.AimbotEnabled = not _G.AimbotEnabled
-				end,}
-			aimbot:AddToggle{Name = "TeamCheck", TextColor = Color3.fromRGB(150,150,150), 
-				Callback = function(v)
-					_G.TeamCheck = v
-				end,}
-			aimbot:AddToggle{Name = "CircleFilled", TextColor = Color3.fromRGB(150,150,150), 
-				Callback = function(v)
-					_G.CircleFilled = v
-				end,}
-			aimbot:AddToggle{Default = true, Name = "CircleVisible", TextColor = Color3.fromRGB(150,150,150), 
-				Callback = function(v)
-					_G.CircleVisible = v
-				end,}
-			aimbot:AddDropdown{
-				Options = {"Head", "HumanoidRootPart"},
-				Default = "Head",
-				Name = "AimPart",
-				Callback = function(Opt)
-					_G.AimPart = Opt
-				end,}
-			aimbot:AddSlider{Name = "Sensitivity", Max = 3,
-				Callback = function(v)
-					_G.Sensitivity = v
-				end}
-			aimbot:AddSlider{Name = "CircleSlides" , Default = 64, Max = 128,
-				Callback = function(v)
-					_G.CircleSlides = v
-				end}
-			aimbot:AddColorpicker{Name = "CircleColor", Default = Color3.fromRGB(255,255,255), 
-				Callback = function(v)
-					_G.CircleColor = v
-				end}
-			aimbot:AddSlider{Name = "CircleRadius", Default = 160, Max = 320,
-				Callback = function(v)
-					_G.CircleRadius = v
-				end}
-			aimbot:AddSlider{Name = "CircleThickness", Max = 5,
-				Callback = function(v)
-					_G.CircleThickness = v
-				end}
-			Tween(Main.UIScroll, "CanvasPosition", Vector2.new(0, Main.UIScroll.UIListLayout.AbsoluteContentSize.Y-Main.UIScroll.Aimbot.AbsoluteSize.Y))
-		end}
 	end)
 
 	local frameToggle = true

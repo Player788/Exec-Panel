@@ -1,4 +1,4 @@
-_G.Version = "1D"
+_G.Version = "1E"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -119,6 +119,7 @@ function Library:Notification(Table)
 		
 		-- highlight
 		local highlight = note.Highlight
+		highlight.BackgroundColor3 = note.Type.ImageButton.ImageColor3
 		Tween(highlight, "Size", UDim2.fromScale(1.05,1.4), "Out", "Linear", 0.5)
 		Tween(highlight, "BackgroundTransparency", 1, "Out", "Linear", 0.5)
 		

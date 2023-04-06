@@ -1,4 +1,4 @@
-_G.Version = "1F"
+_G.Version = "1G"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -116,13 +116,13 @@ function Library:Notification(Table)
 		Tween(note, "Transparency", 0)
 		Tween(note.Message.Label, "TextTransparency", 0)
 		Tween(note.Type.ImageButton, "ImageTransparency", 0)
-		
+
 		-- highlight
 		local highlight = note.Highlight
 		highlight.BackgroundColor3 = note.Type.ImageButton.ImageColor3
 		Tween(highlight, "Size", UDim2.fromScale(1.05,1.4), "Out", "Linear", 0.5)
 		Tween(highlight, "BackgroundTransparency", 1, "Out", "Linear", 0.5)
-		
+
 		wait(Table.Time or 5)
 		Tween(note, "Transparency", 1)
 		Tween(note.Message.Label, "TextTransparency", 1)
@@ -165,7 +165,7 @@ function Library:Window(Table)
 	end
 	if Table.Saves then
 		Window.Saves.Enabled = Table.Saves.Enabled or Window.Saves.Enabled
-		Window.Saves.FileId = Table.Saves.Folder or Window.Saves.FileId
+		Window.Saves.FileId = Table.Saves.FileId or Window.Saves.FileId
 		if not isfolder(Window.Saves.FileId) then
 			makefolder(Window.Saves.FileId)
 		end	
@@ -314,9 +314,9 @@ function Library:Window(Table)
 		newHeader.Icon.Image = Section_mt.Image
 		newHeader.Label.Text = Section_mt.Name
 		newHeader.Visible = true Section.Visible = true
-		
+
 		--table.insert(Elements, Section)
-		
+
 		-- Label
 		function Section_mt:AddLabel(Table)
 			local Label_mt = setmetatable({
@@ -504,7 +504,7 @@ function Library:Window(Table)
 			local Click = OnClick{Toggle, function()
 				Toggle_mt:Set(not Toggle_mt.Value)
 				if Table.Flag and Window.Saves.Enabled == true then
-					Library:Save()
+					Window:Save()
 				end
 			end}
 
@@ -592,7 +592,7 @@ function Library:Window(Table)
 					Bind.Frame.Bind.Text = EnumItem.Name
 					Focus = false
 					if Table.Flag and Window.Saves.Enabled == true then
-						Library:Save()
+						Window:Save()
 					end
 				else
 					Bind.Frame.Bind.Text = Bind_mt.Value.Name
@@ -672,7 +672,9 @@ function Library:Window(Table)
 			end)
 			local function Round(Number, Factor)
 				local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
-				if Result < 0 then Result = Result + Factor end
+				if Result < 0 then 
+					Result = Result + Factor
+				end
 				return Result
 			end
 			function Slider_mt:Set(Value)
@@ -686,7 +688,6 @@ function Library:Window(Table)
 						self:Set(Slider_mt.Value)
 						return
 					end
-
 					if self.Increment < 1 then
 						self.Value = string.format("%.".. #tostring(self.Increment)-string.find(tostring(self.Increment) or 0,"%.").."f", Value)
 					else
@@ -698,7 +699,7 @@ function Library:Window(Table)
 						Slider_mt.Value = self.Value
 						Slider_mt.Callback(self.Value)
 						if Table.Flag and Window.Saves.Enabled == true then
-							Library:Save()
+							Window:Save()
 						end
 					end)
 					if not x then Library:Warn(y) end
@@ -770,7 +771,7 @@ function Library:Window(Table)
 							Dropdown_mt.Value = Option
 							Dropdown_mt.Callback(Option)
 							if Table.Flag and Window.Saves.Enabled == true then
-								Library:Save()
+								Window:Save()
 							end
 						end)
 						if x then Input.Text = tostring('<font color="rgb(150,150,150)">'.. Dropdown_mt.Name ..'</font>, ' .. Option or Option.Name) else Library:Warn(y) end
@@ -920,7 +921,7 @@ function Library:Window(Table)
 				local x, y = pcall(function()
 					Colorpicker_mt.Callback(Display.BackgroundColor3)
 					if Table.Flag and Window.Saves.Enabled == true then
-						Library:Save()
+						Window:Save()
 					end
 				end)
 				if not x then Library:Warn(y) end

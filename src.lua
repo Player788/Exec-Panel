@@ -1,4 +1,4 @@
-_G.Version = "1E"
+_G.Version = "1F"
 local Library = {
 	Logs = {},
 	Flags = {},
@@ -165,9 +165,9 @@ function Library:Window(Table)
 	end
 	if Table.Saves then
 		Window.Saves.Enabled = Table.Saves.Enabled or Window.Saves.Enabled
-		Window.Saves.Folder = Table.Saves.Folder or Window.Saves.Folder
-		if not isfolder(Library.Saves.Folder) then
-			makefolder(Library.Saves.Folder)
+		Window.Saves.FileId = Table.Saves.Folder or Window.Saves.FileId
+		if not isfolder(Library.Saves.FileId) then
+			makefolder(Library.Saves.FileId)
 		end	
 	end
 

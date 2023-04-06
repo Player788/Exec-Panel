@@ -166,8 +166,8 @@ function Library:Window(Table)
 	if Table.Saves then
 		Window.Saves.Enabled = Table.Saves.Enabled or Window.Saves.Enabled
 		Window.Saves.FileId = Table.Saves.Folder or Window.Saves.FileId
-		if not isfolder(Library.Saves.FileId) then
-			makefolder(Library.Saves.FileId)
+		if not isfolder(Window.Saves.FileId) then
+			makefolder(Window.Saves.FileId)
 		end	
 	end
 

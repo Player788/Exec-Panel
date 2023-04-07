@@ -4,7 +4,7 @@ local Library = {
 	Logs = {},
 	Flags = {},
 }
---Library.__index = Library
+Library.__index = Library
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -29,7 +29,7 @@ local EnumToString = Utils.EnumToString
 local Drag = Utils.Drag
 local OnClick = Utils.Click
 
-local Exec = game:GetObjects("rbxassetid://12651264749")[1]--12935941227
+local Exec = game:GetObjects("rbxassetid://12651264749")[1]
 Exec.Enabled = true
 local Main = Exec.Main
 local Init = Main.Init

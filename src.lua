@@ -1,4 +1,4 @@
-_G.Version = "1I"
+_G.Version = "1J"
 setclipboard(_G.Version)
 local Library = {
 	Logs = {},
@@ -56,6 +56,20 @@ elseif gethui then
 	Exec.Parent = gethui()
 else
 	Exec.Parent = game.Players.LocalPlayer.PlayerGui
+end
+
+if gethui then
+	for _, Interface in ipairs(gethui():GetChildren()) do
+		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+			Interface.Destroy()
+		end
+	end
+else
+	for _, Interface in ipairs(CoreGui:GetChildren()) do
+		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+			Interface.Destroy()
+		end
+	end
 end
 
 function Index(Table, Key)

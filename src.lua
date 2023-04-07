@@ -1,9 +1,10 @@
-_G.Version = "1H"
+_G.Version = "1I"
+setclipboard(_G.Version)
 local Library = {
 	Logs = {},
 	Flags = {},
 }
-Library.__index = Library
+--Library.__index = Library
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")

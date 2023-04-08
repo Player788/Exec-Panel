@@ -1,4 +1,4 @@
-
+print("1L")
 local Library = {
 	Logs = {},
 	Flags = {},

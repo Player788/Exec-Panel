@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1K"
+_G.Version = "1L"
 setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -60,14 +60,14 @@ end
 
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
-			Interface:Destroy()
+		if Interface.Name == Exec.Name and Interface ~= Exec then
+			Exec:Destroy()
 		end
 	end
 else
 	for _, Interface in ipairs(CoreGui:GetChildren()) do
-		if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
-			Interface:Destroy()
+		if Interface.Name == Exec.Name and Interface ~= Exec then
+			Exec:Destroy()
 		end
 	end
 end

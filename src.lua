@@ -61,13 +61,15 @@ end
 if gethui then
 	for _, Interface in ipairs(gethui():GetChildren()) do
 		if Interface.Name == Exec.Name and Interface ~= Exec then
-			Exec:Destroy()
+			Interface.Enabled = false
+			Interface.Name = tostring(math.random(1,100) .. "-" .. math.random(1,100) .. "-" .. math.random(1,100))
 		end
 	end
 else
 	for _, Interface in ipairs(CoreGui:GetChildren()) do
 		if Interface.Name == Exec.Name and Interface ~= Exec then
-			Exec:Destroy()
+			Interface.Enabled = false
+			Interface.Name = tostring(math.random(1,100) .. "-" .. math.random(1,100) .. "-" .. math.random(1,100))
 		end
 	end
 end

@@ -1,10 +1,9 @@
-print("1L")
 local Library = {
 	Logs = {},
 	Flags = {},
 }
--- Library.__index = Library
-_G.Version = "1L"
+Library.__index = Library
+_G.Version = "1K"
 setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -16,75 +15,25 @@ local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
---local Utils = loadstring(game:HttpGet("https://raw.githubusercontent.com/Player788/luau1/main/lib2.lua"))()
-local Utils = {}
-function Create(Table)
-
-	local Object = Instance.new(Table.Class) 
-	Object.Parent = Table.Parent or nil
-	for i, v in pairs(Table) do
-		pcall(function()
-			Object[i] = v
-		end)	
-	end
-
-	return Object
-end
-function Tween(Obj, Property, Value, Direction, Style, Duration)
-	Direction = Direction or "InOut"
-	Style = Style or "Quint"
-	Duration = Duration or 0.3
-	local nTweenInfo = TweenInfo.new(Duration, Enum.EasingStyle[Style], Enum.EasingDirection[Direction])
-	local Tween = TweenService:Create(Obj, nTweenInfo, {[Property] = Value})
-	Tween:Play()
-	return Tween
-end
-function OnClick(Table)
-	local Click = Create {
-		BackgroundTransparency = 1,
-		Class = "TextButton",
-		Parent = Table[1],
-		Text = "",
-		Size = UDim2.new(1,0,1,0),
-		AutoButtonColor = false,
-		ZIndex = Table.ZIndex or 1
-	}
-	Click.Activated:Connect(function()
-		if Table[2] then
-			if typeof(Table[2]) == "function" then
-				return Table[2]()
-			end
-		end
-	end)
-	return Click
-end
-Utils.ProxyHover = function(GuiObj, GuiObj2, Property, Value1, Value2)
-	GuiObj.MouseEnter:Connect(function()
-		Library.Tween(GuiObj2, Property, Value1)
-	end)
-	GuiObj.MouseLeave:Connect(function()
-		Library.Tween(GuiObj2, Property, Value2)
-	end)
-end
-
--- local Create = Utils.Create
--- local Headshot = Utils.Headshot
--- local UserId = Utils.GetUserId
--- local Date = Utils.Date
--- local Tween = Utils.Tween
--- local MouseHover = Utils.MouseHover
--- local BoolToString = Utils.BoolToString
--- local toJSON = Utils.toJSON
--- local toTable = Utils.toTable
--- local EnumToString = Utils.EnumToString
--- local Drag = Utils.Drag
--- local OnClick = Utils.Click
+local Utils = loadstring(game:HttpGet("https://raw.githubusercontent.com/Player788/luau1/main/lib2.lua"))()
+local Create = Utils.Create
+local Headshot = Utils.Headshot
+local UserId = Utils.GetUserId
+local Date = Utils.Date
+local Tween = Utils.Tween
+local MouseHover = Utils.MouseHover
+local BoolToString = Utils.BoolToString
+local toJSON = Utils.toJSON
+local toTable = Utils.toTable
+local EnumToString = Utils.EnumToString
+local Drag = Utils.Drag
+local OnClick = Utils.Click
 
 local Exec = game:GetObjects("rbxassetid://12651264749")[1]
 Exec.Enabled = true
 local Main = Exec.Main
 local Init = Main.Init
-local Top = Main.Top --Utils.Drag(Top, Main)
+local Top = Main.Top Utils.Drag(Top, Main)
 local NoteFrame = Exec.Noties.Note
 local Elements = Main.ElementsScroll
 local Section = Elements.Section

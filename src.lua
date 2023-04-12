@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1L"
+_G.Version = "1M"
 setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -284,16 +284,15 @@ function Library:Window(Table)
 	function Window:Save()
 		local Data = {}
 		for i,v in pairs(Library.Flags) do
-			if v.Type and v.Type == "Colorpicker" then
+			pcall(function()
+			if v.Type == "Colorpicker" then
 				Data[i] = {R = v.Value.R * 255, G = v.Value.G * 255, B = v.Value.B * 255}
-			elseif v.Type and v.Type == "Bind" then
+			elseif v.Type == "Bind" then
 				Data[i] = v.Value.Name
-			else
-				pcall(function()
-					Data[i] = v.Value	
-				end)
-				
+			else	
+				Data[i] = v.Value		
 			end
+			end)
 		end
 		writefile(Window.Saves.FileId .. "/" .. game.GameId .. ".txt", tostring(HttpService:JSONEncode(Data)))
 	end
@@ -305,15 +304,16 @@ function Library:Window(Table)
 			for i,v in pairs(Data) do
 				if Library.Flags[i] then
 					spawn(function() 
-						if Library.Flags[i].Type and Library.Flags[i].Type == "Colorpicker" then
-							Library.Flags[i]:Set(Color3.fromRGB(v.R, v.G, v.B))
-						elseif Library.Flags[i].Type and Library.Flags[i].Type == "Bind" then
-							Library.Flags[i]:Set(Enum.KeyCode[v])
-						else
-							pcall(function()
+						pcall(function()
+							if Library.Flags[i].Type == "Colorpicker" then
+								Library.Flags[i]:Set(Color3.fromRGB(v.R, v.G, v.B))
+							elseif Library.Flags[i].Type == "Bind" then
+								Library.Flags[i]:Set(Enum.KeyCode[v])
+							else
 								Library.Flags[i]:Set(v)
-							end)	
-						end    
+							end  		
+						end)
+						  
 					end)
 				else
 					Library:Warn("Filesystem could not find flag '" .. i .."'")

@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1M"
+_G.Version = "1N"
 setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -63,15 +63,19 @@ if gethui then
 		if Interface.Name == Exec.Name and Interface ~= Exec then
 			Interface.Enabled = false
 			Interface.Name = tostring(math.random(1,100) .. "-" .. math.random(1,100) .. "-" .. math.random(1,100))
+			break
 		end
 	end
 else
-	for _, Interface in ipairs(CoreGui:GetChildren()) do
-		if Interface.Name == Exec.Name and Interface ~= Exec then
-			Interface.Enabled = false
-			Interface.Name = tostring(math.random(1,100) .. "-" .. math.random(1,100) .. "-" .. math.random(1,100))
+	pcall(function()
+		for _, Interface in ipairs(CoreGui:GetChildren()) do
+			if Interface.Name == Exec.Name and Interface ~= Exec then
+				Interface.Enabled = false
+				Interface.Name = tostring(math.random(1,100) .. "-" .. math.random(1,100) .. "-" .. math.random(1,100))
+				break
+			end
 		end
-	end
+	end)
 end
 
 function Index(Table, Key)
@@ -285,13 +289,15 @@ function Library:Window(Table)
 		local Data = {}
 		for i,v in pairs(Library.Flags) do
 			pcall(function()
-			if v.Type == "Colorpicker" then
-				Data[i] = {R = v.Value.R * 255, G = v.Value.G * 255, B = v.Value.B * 255}
-			elseif v.Type == "Bind" then
-				Data[i] = v.Value.Name
-			else	
-				Data[i] = v.Value		
-			end
+				if v.Type == "Colorpicker" then
+					Data[i] = {R = v.Value.R * 255, G = v.Value.G * 255, B = v.Value.B * 255}
+				elseif v.Type == "Bind" then
+					Data[i] = v.Value.Name
+				else
+					if v.Type then
+						Data[i] = v.Value	
+					end
+				end
 			end)
 		end
 		writefile(Window.Saves.FileId .. "/" .. game.GameId .. ".txt", tostring(HttpService:JSONEncode(Data)))
@@ -310,10 +316,12 @@ function Library:Window(Table)
 							elseif Library.Flags[i].Type == "Bind" then
 								Library.Flags[i]:Set(Enum.KeyCode[v])
 							else
-								Library.Flags[i]:Set(v)
+								if Library.Flags[i].Type then
+									Library.Flags[i]:Set(v)
+								end
 							end  		
 						end)
-						  
+
 					end)
 				else
 					Library:Warn("Filesystem could not find flag '" .. i .."'")

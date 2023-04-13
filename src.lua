@@ -374,7 +374,7 @@ function Library:Window(Table)
 				if not x then Library:Warn(y) end
 			end}
 
-			Utils.ProxyHover(Click, Label.Frame, "BackgroundTransparency", 0,1)
+			--Utils.ProxyHover(Click, Label.Frame, "BackgroundTransparency", 0,1)
 
 			function Label_mt:AddLabel(Table)
 				return Section_mt:AddLabel(Table)

@@ -37,7 +37,7 @@ local Window = Library:Window{
 ### Creating a Section
 
 ```lua
-local Section = Window:Section{Name = <string>, Image = <string>}
+local Section = Window:AddSection{Name = <string>, Image = <string>}
 ```
 
 ***

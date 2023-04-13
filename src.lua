@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1N"
+_G.Version = "1O"
 setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -34,6 +34,7 @@ Exec.Enabled = true
 local Main = Exec.Main
 local Init = Main.Init
 local Top = Main.Top Utils.Drag(Top, Main)
+local TipFrame = Exec.Tip
 local NoteFrame = Exec.Noties.Note
 local Elements = Main.ElementsScroll
 local Section = Elements.Section
@@ -262,7 +263,7 @@ function Library:Window(Table)
 
 	local Elements = {}
 	Elements.__index = Elements
-
+	
 	Top.Box.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
 		local Search = string.lower(Top.Box.TextBox.Text)
 		for i, v in pairs(Elements) do
@@ -284,7 +285,23 @@ function Library:Window(Table)
 			end
 		end
 	end)
-
+	
+	local mouse_move_signal
+	local function ShowToolTip(Element_mt, Hovering)
+		if Element_mt.ToolTip then
+			if Hovering then
+				TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. Element_mt.Name ..'</font></b> ' .. Element_mt.ToolTip
+				mouse_move_signal = Mouse.Move:Connect(function()
+					TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+				end)		
+				TipFrame.Visible = not TipFrame.Visible
+			else
+				mouse_move_signal:Disconnect()
+				TipFrame.Visible = not TipFrame.Visible
+			end			
+		end
+	end
+	
 	function Window:Save()
 		local Data = {}
 		for i,v in pairs(Library.Flags) do
@@ -398,6 +415,7 @@ function Library:Window(Table)
 				Image = Table.Image or "rbxassetid://7734010405",
 				Callback = Table.Callback or function() end,
 				Flag = Table.Flag or #Elements,
+				ToolTip = Table.ToolTip or Table.Desc or false
 			}, Elements)
 
 			local Button = TextButton:Clone() 
@@ -418,8 +436,8 @@ function Library:Window(Table)
 				if not x then Library:Warn(y) end
 			end}
 
-			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1)
-
+			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Button_mt, boolean) end)
+			
 			function Button_mt:AddButton(Table)
 				return Section_mt:AddButton(Table)
 			end
@@ -446,6 +464,7 @@ function Library:Window(Table)
 				--Default = Table.Default or "",
 				Placeholder = Table.Placeholder or "Textbox",
 				Flag = Table.Flag or #Elements,
+				ToolTip = Table.ToolTip or Table.Desc or false
 			}, Elements)
 
 			local Textbox = InputBox:Clone() 
@@ -480,7 +499,7 @@ function Library:Window(Table)
 
 			end)
 
-			Utils.ProxyHover(Click, Textbox.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(Click, Textbox.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Input_mt, boolean) end)
 
 			function Input_mt:AddTextbox(Table)
 				return Section_mt:AddTextbox(Table)
@@ -506,6 +525,7 @@ function Library:Window(Table)
 				Value = Table.Default or false,
 				Flag = Table.Flag or #Elements,
 				Type = "Toggle",
+				ToolTip = Table.ToolTip or Table.Desc or false,
 			}, Elements)
 
 			local Toggle = ToggleButton:Clone() 
@@ -545,7 +565,7 @@ function Library:Window(Table)
 			function Toggle_mt:Destroy()
 				Toggle:Destroy()
 			end
-			Utils.ProxyHover(Click, Toggle.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(Click, Toggle.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Toggle_mt, boolean) end)
 			Toggle_mt:Set(Toggle_mt.Value)
 			Library.Flags[Toggle_mt.Flag] = Toggle_mt
 			return Toggle_mt
@@ -562,6 +582,7 @@ function Library:Window(Table)
 				Flag = Table.Flag or #Elements,
 				Hold = Table.Hold or false,
 				Type = "Bind",
+				ToolTip = Table.ToolTip or Table.Desc or false
 			}, Elements)
 
 			local Bind = KeybindButton:Clone() 
@@ -639,7 +660,7 @@ function Library:Window(Table)
 				Bind:Destroy()
 			end
 
-			Utils.ProxyHover(Bind, Bind.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(Bind, Bind.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Bind_mt, boolean) end)
 			Utils.ProxyHover(Bind, Bind.Frame.Bind, "BackgroundColor3", Color3.fromRGB(35,35,35), Color3.fromRGB(45,45,45))
 			Bind_mt:Set(Bind_mt.Value)
 			Library.Flags[Bind_mt.Flag] = Bind_mt
@@ -658,6 +679,7 @@ function Library:Window(Table)
 				Increment = Table.Increment or 1,
 				Callback = Table.Callback or function() end,
 				Type = "Slider",
+				ToolTip = Table.ToolTip or Table.Desc or false,
 			}, Elements)
 
 			local newSlider = Slider:Clone()  
@@ -745,7 +767,7 @@ function Library:Window(Table)
 				return Section_mt:AddSlider(Table)		
 			end
 			Slider_mt:Set(Slider_mt.Value)
-			Utils.ProxyHover(newSlider, newSlider.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(newSlider, newSlider.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Slider_mt, boolean) end)
 			Library.Flags[Slider_mt.Flag] = Slider_mt
 			return Slider_mt
 		end
@@ -761,7 +783,8 @@ function Library:Window(Table)
 				Callback = Table.Callback or function() end,
 				Toggled = false,
 				Value = Table.Default or false;
-				Type = "Dropdown"
+				Type = "Dropdown",
+				ToolTip = Table.ToolTip or Table.Desc or false
 			}, Elements)
 
 			local newdrop = Dropdown:Clone(); newdrop.Parent = Section or Main.ElementsScroll
@@ -900,7 +923,7 @@ function Library:Window(Table)
 			end
 			Dropdown_mt:Refresh(Dropdown_mt.Options, true)
 			Dropdown_mt:Set(Dropdown_mt.Value)
-			Utils.ProxyHover(newdrop, newdrop.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(newdrop, newdrop.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Dropdown_mt, boolean) end)
 			Library.Flags[Dropdown_mt.Flag] = Dropdown_mt
 			return Dropdown_mt
 		end
@@ -915,7 +938,8 @@ function Library:Window(Table)
 				TextColor = Table.TextColor or Color3.fromRGB(200,200,200),
 				Callback = Table.Callback or function() end,
 				Toggled = false,
-				Type = "Colorpicker"
+				Type = "Colorpicker",
+				ToolTip = Table.ToolTip or Table.Desc or false
 			}, Elements)
 
 			local ColorH, ColorS, ColorV = 1, 1, 1
@@ -1048,7 +1072,7 @@ function Library:Window(Table)
 			end
 			Colorpicker_mt:Set(Colorpicker_mt.Value)
 			-- change color background
-			Utils.ProxyHover(newColor, newColor.Frame, "BackgroundTransparency", 0,1)
+			Utils.ProxyHover(newColor, newColor.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Colorpicker_mt, boolean) end)
 			Library.Flags[Colorpicker_mt.Flag] = Colorpicker_mt
 			return Colorpicker_mt
 		end

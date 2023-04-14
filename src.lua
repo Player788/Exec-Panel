@@ -3,8 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1O"
-setclipboard(_G.Version)
+_G.Version = "1P"
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -286,19 +285,17 @@ function Library:Window(Table)
 		end
 	end)
 	
-	local mouse_move_signal
+	
+	local mouse_move_signal;mouse_move_signal = Mouse.Move:Connect(function()
+		TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+	end)	
 	local function ShowToolTip(Element_mt, Hovering)
 		if Element_mt.ToolTip then
-			if Hovering then
-				TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. Element_mt.Name ..'</font></b> ' .. Element_mt.ToolTip
-				mouse_move_signal = Mouse.Move:Connect(function()
-					TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
-				end)		
-				TipFrame.Visible = not TipFrame.Visible
-			else
-				mouse_move_signal:Disconnect()
-				TipFrame.Visible = not TipFrame.Visible
-			end			
+			TipFrame.Visible = not TipFrame.Visible
+			TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. Element_mt.Name ..'</font></b> ' .. Element_mt.ToolTip		
+			Tween(TipFrame, "BackgroundTransparency", TipFrame.Visible and 0 or 1)
+			Tween(TipFrame.TextLabel, "TextTransparency", TipFrame.Visible and 0 or 1)
+			Tween(TipFrame.UIStroke, "Transparency", TipFrame.Visible and 0.5 or 1)
 		end
 	end
 	

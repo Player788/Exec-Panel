@@ -62,6 +62,7 @@ Section:AddButton{
 
 * You need to state your element as a variable to get its methods, Example `local Button = Section:AddButton{}`
 * You can also chain element methods, Example `LeftSection:AddButton{}:AddButton{}`
+* You can add element ToolTips, Example `:AddButton{ToolTip = <string>}`
 
 #### Methods
 

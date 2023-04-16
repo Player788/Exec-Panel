@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1P"
+_G.Version = "1Q"
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -267,19 +267,21 @@ function Library:Window(Table)
 		local Search = string.lower(Top.Box.TextBox.Text)
 		for i, v in pairs(Elements) do
 			if typeof(v) ~= "table" and v:IsA("Frame") then
-				v.Parent.Visible = false
+				--v.Parent.Visible = false
 				if Search ~= "" then
 					local Opt_ = string.lower(v.Name)
 					if string.find(Opt_, Search) then
-						v.Parent.Visible = true
+						--v.Parent.Visible = true
 					end
 					if Search == Opt_ then
+						local relativePosition = Main.ElementsScroll.AbsolutePosition - v.AbsolutePosition
+						Tween(Main.ElementsScroll, "CanvasPosition", Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - relativePosition.Y))
 						Tween(v.Frame, "BackgroundTransparency", 0)
 						wait(0.3)
 						Tween(v.Frame, "BackgroundTransparency", 1)
 					end
 				elseif Search == "" then
-					v.Parent.Visible = true
+					--v.Parent.Visible = true
 				end
 			end
 		end

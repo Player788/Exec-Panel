@@ -3,7 +3,7 @@ local Library = {
 	Flags = {},
 }
 Library.__index = Library
-_G.Version = "1Q"
+_G.Version = "1R"
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -272,32 +272,37 @@ function Library:Window(Table)
 					local Opt_ = string.lower(v.Name)
 					if string.find(Opt_, Search) then
 						--v.Parent.Visible = true
+						Tween(Main.ElementsScroll, "CanvasPosition",
+							Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - (Main.ElementsScroll.AbsolutePosition - v.Parent.AbsolutePosition).Y))
 					end
 					if Search == Opt_ then
-						local relativePosition = Main.ElementsScroll.AbsolutePosition - v.AbsolutePosition
-						Tween(Main.ElementsScroll, "CanvasPosition", Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - relativePosition.Y))
+						Tween(Main.ElementsScroll, "CanvasPosition",
+							Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - (Main.ElementsScroll.AbsolutePosition - v.AbsolutePosition).Y))
 						Tween(v.Frame, "BackgroundTransparency", 0)
 						wait(0.3)
 						Tween(v.Frame, "BackgroundTransparency", 1)
+						break
 					end
 				elseif Search == "" then
 					--v.Parent.Visible = true
+					Tween(Main.ElementsScroll, "CanvasPosition", Vector2.new(0,0))
 				end
 			end
 		end
 	end)
 	
 	
-	local mouse_move_signal;mouse_move_signal = Mouse.Move:Connect(function()
+	Mouse.Move:Connect(function()
 		TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
 	end)	
+	
 	local function ShowToolTip(Element_mt, Hovering)
 		if Element_mt.ToolTip then
-			TipFrame.Visible = not TipFrame.Visible
+			TipFrame.Visible = Hovering
 			TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. Element_mt.Name ..'</font></b> ' .. Element_mt.ToolTip		
-			Tween(TipFrame, "BackgroundTransparency", TipFrame.Visible and 0 or 1)
-			Tween(TipFrame.TextLabel, "TextTransparency", TipFrame.Visible and 0 or 1)
-			Tween(TipFrame.UIStroke, "Transparency", TipFrame.Visible and 0.5 or 1)
+			Tween(TipFrame, "BackgroundTransparency", Hovering and 0 or 1)
+			Tween(TipFrame.TextLabel, "TextTransparency", Hovering and 0 or 1)
+			Tween(TipFrame.UIStroke, "Transparency", Hovering and 0.5 or 1)
 		end
 	end
 	

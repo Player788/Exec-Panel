@@ -308,16 +308,6 @@ function Library:Window(Table)
 		end
 	end)	
 	
-	local function ShowToolTip(Element_mt, Hovering)
-		if Element_mt.ToolTip then
-			TipFrame.Visible = Hovering
-			TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. Element_mt.Name ..'</font></b> ' .. Element_mt.ToolTip		
-			Tween(TipFrame, "BackgroundTransparency", Hovering and 0 or 1)
-			Tween(TipFrame.TextLabel, "TextTransparency", Hovering and 0 or 1)
-			Tween(TipFrame.UIStroke, "Transparency", Hovering and 0.5 or 1)
-		end
-	end
-	
 	function Window:Save()
 		local Data = {}
 		for i,v in pairs(Library.Flags) do

@@ -290,7 +290,7 @@ function Library:Window(Table)
 		local GuiObjects = LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
 		found = false
 		for i,v in pairs(Elements) do		
-			if Index(GuiObjects, v) then
+			if Index(GuiObjects, v) and v:GetAttribute("ToolTip") then
 				found = true
 				TipFrame.Visible = true
 				TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. v.Name ..'</font></b> ' .. v:GetAttribute("ToolTip")	

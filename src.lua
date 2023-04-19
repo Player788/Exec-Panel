@@ -297,6 +297,7 @@ function Library:Window(Table)
 				Tween(TipFrame, "BackgroundTransparency", 0)
 				Tween(TipFrame.TextLabel, "TextTransparency",0)
 				Tween(TipFrame.UIStroke, "Transparency", 0.5)
+				break
 			end
 		end
 		if not found then

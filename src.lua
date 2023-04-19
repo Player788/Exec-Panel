@@ -1,9 +1,11 @@
 local Library = {
 	Logs = {},
 	Flags = {},
+	Sounds = true,
 }
 Library.__index = Library
-_G.Version = "1R"
+_G.Version = "1S"
+--setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -47,6 +49,11 @@ local Colorpicker = Elements.Colorpicker local Colorpicker_Frame = Init.Colorpic
 local Dropdown = Elements.Dropdown local Dropdown_Options = Elements.Dropdown_Options local OptTemp = Elements.Option
 local Label = Elements.Label
 
+local sound = Instance.new("Sound")
+sound.Parent = Exec
+sound.Volume = 0.25
+sound.SoundId = "rbxassetid://1562091866"
+
 local BlacklistedKeys = {Enum.KeyCode.Unknown,Enum.KeyCode.W,Enum.KeyCode.A,Enum.KeyCode.S,Enum.KeyCode.D,Enum.KeyCode.Up,Enum.KeyCode.Left,Enum.KeyCode.Down,Enum.KeyCode.Right,Enum.KeyCode.Slash,Enum.KeyCode.Tab,Enum.KeyCode.Backspace,Enum.KeyCode.Escape}
 
 if syn then
@@ -86,33 +93,10 @@ function Index(Table, Key)
 	end
 end
 
---function HereditaryAnim(instance, properties, value, excluded)
---	for i,v in pairs(properties) do
---		pcall(function()
---			if instance[v] then
---				Tween(instance, v, 1)
---			end
---		end)
---	end
---	for i, v in pairs(instance:GetDescendants()) do
---		if v:IsA("GuiBase2d") then
---			for x, y in pairs(properties) do
---				pcall(function()
---					if v[y] then
---						if not excluded[v] then
---							Tween(v, y, 1)
---						end
-
---					end
---				end)
---			end
---		end
---	end
---end
-
 function Library:Notification(Table)
 	wait(0.5)
 	spawn(function()
+		sound:Play()
 		table.insert(Library.Logs, Table.Content)
 		local note = NoteFrame:Clone()
 		note.Parent = Exec.Noties
@@ -170,7 +154,7 @@ function Library:Window(Table)
 			FileId = "raw",
 			Enabled = false
 		},
-		Sounds = Table.Sounds or "true",
+		Sounds = Table.Sounds or true,
 		KeySystem = {
 			Enabled = true,
 			External = false,
@@ -191,7 +175,11 @@ function Library:Window(Table)
 			makefolder(Window.Saves.FileId)
 		end	
 	end
-
+	
+	if Window.Sounds then
+		Library.Sounds = Window.Sounds
+	end
+	
 	-- Loading
 	Exec.Main.ElementsScroll.Visible = false
 	Top.Visible = false
@@ -263,19 +251,26 @@ function Library:Window(Table)
 	local Elements = {}
 	Elements.__index = Elements
 	
+	Top.Box.TextBox.FocusLost:Connect(function(Enter)
+		if Enter then
+			Top.Box.TextBox.Text = Top.Box.Placeholder.Text
+			Top.Box.TextBox:ReleaseFocus()
+		end
+	end)
 	Top.Box.TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		Top.Box.Placeholder.Text = ""
 		local Search = string.lower(Top.Box.TextBox.Text)
 		for i, v in pairs(Elements) do
 			if typeof(v) ~= "table" and v:IsA("Frame") then
-				--v.Parent.Visible = false
 				if Search ~= "" then
 					local Opt_ = string.lower(v.Name)
-					if string.find(Opt_, Search) then
-						--v.Parent.Visible = true
+					if Opt_:sub(1, #Search) == Search then --if string.find(Opt_, Search) then
+						Top.Box.Placeholder.Text = Opt_
 						Tween(Main.ElementsScroll, "CanvasPosition",
 							Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - (Main.ElementsScroll.AbsolutePosition - v.Parent.AbsolutePosition).Y))
 					end
 					if Search == Opt_ then
+						Top.Box.Placeholder.Text = ""
 						Tween(Main.ElementsScroll, "CanvasPosition",
 							Vector2.new(Main.ElementsScroll.CanvasPosition.X, Main.ElementsScroll.CanvasPosition.Y - (Main.ElementsScroll.AbsolutePosition - v.AbsolutePosition).Y))
 						Tween(v.Frame, "BackgroundTransparency", 0)
@@ -284,13 +279,12 @@ function Library:Window(Table)
 						break
 					end
 				elseif Search == "" then
-					--v.Parent.Visible = true
+					Top.Box.Placeholder.Text = ""
 					Tween(Main.ElementsScroll, "CanvasPosition", Vector2.new(0,0))
 				end
 			end
 		end
 	end)
-	
 	
 	Mouse.Move:Connect(function()
 		TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
@@ -440,7 +434,7 @@ function Library:Window(Table)
 				if not x then Library:Warn(y) end
 			end}
 
-			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Button_mt, boolean) end)
+			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1, function(v) ShowToolTip(Button_mt, v) end)
 			
 			function Button_mt:AddButton(Table)
 				return Section_mt:AddButton(Table)
@@ -1141,7 +1135,15 @@ function Library:Window(Table)
 		Main.ElementsScroll.Visible = not Main.ElementsScroll.Visible
 		Main.UIScroll.Visible = not Main.UIScroll.Visible
 	end}
-
+	
+	UserInputService.InputBegan:Connect(function(input)
+		if input.KeyCode == Window.Hotkey.Key then
+			if Window.Hotkey.Enabled then
+				Main.Visible = not Main.Visible
+			end
+		end	
+	end)
+	
 	Library.Flags[Window.Flag] = Window
 
 	wait(0.3)

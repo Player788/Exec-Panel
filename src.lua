@@ -4,7 +4,7 @@ local Library = {
 	Sounds = true,
 }
 Library.__index = Library
-_G.Version = "1S"
+_G.Version = "1T"
 --setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -132,8 +132,7 @@ function Library:Notification(Table)
 		Tween(note, "Transparency", 1)
 		Tween(note.Message.Label, "TextTransparency", 1)
 
-		local final = Tween(note.Type.ImageButton, "ImageTransparency", 1)
-		final.Completed:Connect(function()
+		Tween(note.Type.ImageButton, "ImageTransparency", 1).Completed:Connect(function()
 			note:Destroy()
 		end)
 
@@ -286,8 +285,27 @@ function Library:Window(Table)
 		end
 	end)
 	
-	Mouse.Move:Connect(function()
+	local found;Mouse.Move:Connect(function()
 		TipFrame.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+		local GuiObjects = LocalPlayer.PlayerGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)
+		found = false
+		for i,v in pairs(Elements) do		
+			if Index(GuiObjects, v) then
+				found = true
+				TipFrame.Visible = true
+				TipFrame.TextLabel.Text = '<b><font color="rgb(200,200,200)">'.. v.Name ..'</font></b> ' .. v:GetAttribute("ToolTip")	
+				Tween(TipFrame, "BackgroundTransparency", 0)
+				Tween(TipFrame.TextLabel, "TextTransparency",0)
+				Tween(TipFrame.UIStroke, "Transparency", 0.5)
+			end
+		end
+		if not found then
+			TipFrame.Visible = false
+			TipFrame.Visible = false
+			Tween(TipFrame, "BackgroundTransparency", 1)
+			Tween(TipFrame.TextLabel, "TextTransparency", 1)
+			Tween(TipFrame.UIStroke, "Transparency",1)
+		end
 	end)	
 	
 	local function ShowToolTip(Element_mt, Hovering)
@@ -424,7 +442,9 @@ function Library:Window(Table)
 			Button.Name = Button_mt.Name
 			Button.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			Button.Visible = true
-
+			
+			Button:SetAttribute("ToolTip", Button_mt.ToolTip)
+			
 			table.insert(Elements, Button)	
 
 			local Click = OnClick{Button, function() 
@@ -434,7 +454,7 @@ function Library:Window(Table)
 				if not x then Library:Warn(y) end
 			end}
 
-			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1, function(v) ShowToolTip(Button_mt, v) end)
+			Utils.ProxyHover(Click, Button.Frame, "BackgroundTransparency", 0,1)
 			
 			function Button_mt:AddButton(Table)
 				return Section_mt:AddButton(Table)
@@ -475,7 +495,9 @@ function Library:Window(Table)
 			Textbox.Name = Input_mt.Name
 			Textbox.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			Textbox.Visible = true
-
+			
+			Textbox:SetAttribute("ToolTip", Input_mt.ToolTip)
+			
 			table.insert(Elements, Textbox)
 
 			local Click = OnClick{Textbox, function()
@@ -497,7 +519,7 @@ function Library:Window(Table)
 
 			end)
 
-			Utils.ProxyHover(Click, Textbox.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Input_mt, boolean) end)
+			Utils.ProxyHover(Click, Textbox.Frame, "BackgroundTransparency", 0,1)
 
 			function Input_mt:AddTextbox(Table)
 				return Section_mt:AddTextbox(Table)
@@ -533,7 +555,7 @@ function Library:Window(Table)
 			Toggle.Name = Toggle_mt.Name
 			Toggle.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			Toggle.Visible = true
-
+			Toggle:SetAttribute("ToolTip", Toggle_mt.ToolTip)
 			table.insert(Elements, Toggle)
 
 			function Toggle_mt:Set(Boolean)
@@ -563,7 +585,7 @@ function Library:Window(Table)
 			function Toggle_mt:Destroy()
 				Toggle:Destroy()
 			end
-			Utils.ProxyHover(Click, Toggle.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Toggle_mt, boolean) end)
+			Utils.ProxyHover(Click, Toggle.Frame, "BackgroundTransparency", 0,1)
 			Toggle_mt:Set(Toggle_mt.Value)
 			Library.Flags[Toggle_mt.Flag] = Toggle_mt
 			return Toggle_mt
@@ -591,7 +613,7 @@ function Library:Window(Table)
 			Bind.Name = Bind_mt.Name
 			Bind.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			Bind.Visible = true
-
+			Bind:SetAttribute("ToolTip", Bind_mt.ToolTip)
 			table.insert(Elements, Bind)
 
 			local Focus = false
@@ -658,7 +680,7 @@ function Library:Window(Table)
 				Bind:Destroy()
 			end
 
-			Utils.ProxyHover(Bind, Bind.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Bind_mt, boolean) end)
+			Utils.ProxyHover(Bind, Bind.Frame, "BackgroundTransparency", 0,1)
 			Utils.ProxyHover(Bind, Bind.Frame.Bind, "BackgroundColor3", Color3.fromRGB(35,35,35), Color3.fromRGB(45,45,45))
 			Bind_mt:Set(Bind_mt.Value)
 			Library.Flags[Bind_mt.Flag] = Bind_mt
@@ -689,6 +711,7 @@ function Library:Window(Table)
 			newSlider.Name = Slider_mt.Name
 			newSlider.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			newSlider.Visible = true
+			newSlider:SetAttribute("ToolTip", Slider_mt.ToolTip)
 			local SliderBar = newSlider.Frame.Bar
 			local Click = OnClick({newSlider})
 
@@ -765,7 +788,7 @@ function Library:Window(Table)
 				return Section_mt:AddSlider(Table)		
 			end
 			Slider_mt:Set(Slider_mt.Value)
-			Utils.ProxyHover(newSlider, newSlider.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Slider_mt, boolean) end)
+			Utils.ProxyHover(newSlider, newSlider.Frame, "BackgroundTransparency", 0,1)
 			Library.Flags[Slider_mt.Flag] = Slider_mt
 			return Slider_mt
 		end
@@ -788,6 +811,7 @@ function Library:Window(Table)
 			local newdrop = Dropdown:Clone(); newdrop.Parent = Section or Main.ElementsScroll
 			newdrop.Frame.Icon.Image = Dropdown_mt.Image
 			newdrop.Frame.Textbox.PlaceholderText = Dropdown_mt.Name
+			newdrop:SetAttribute("ToolTip", Dropdown_mt.ToolTip)
 			local Options = Dropdown_Options:Clone() Options.Parent = Section or Main.ElementsScroll
 			newdrop.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			Options.Size = UDim2.new(1,0,0, 0)
@@ -921,7 +945,7 @@ function Library:Window(Table)
 			end
 			Dropdown_mt:Refresh(Dropdown_mt.Options, true)
 			Dropdown_mt:Set(Dropdown_mt.Value)
-			Utils.ProxyHover(newdrop, newdrop.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Dropdown_mt, boolean) end)
+			Utils.ProxyHover(newdrop, newdrop.Frame, "BackgroundTransparency", 0,1)
 			Library.Flags[Dropdown_mt.Flag] = Dropdown_mt
 			return Dropdown_mt
 		end
@@ -945,6 +969,7 @@ function Library:Window(Table)
 			newColor.Size = UDim2.new(1,0,0, Header.AbsoluteSize.Y)
 			newColor.Frame.Label.Text = Colorpicker_mt.Name
 			newColor.Visible = true
+			newColor:SetAttribute("ToolTip", Colorpicker_mt.ToolTip)
 			local Display = newColor.Frame.Image
 			local Color = Colorpicker_Frame.Color local ColorSelection = Color.ImageLabel
 			local Hue = Colorpicker_Frame.Hue local HueSelection = Hue.Line
@@ -1070,7 +1095,7 @@ function Library:Window(Table)
 			end
 			Colorpicker_mt:Set(Colorpicker_mt.Value)
 			-- change color background
-			Utils.ProxyHover(newColor, newColor.Frame, "BackgroundTransparency", 0,1, function(boolean) ShowToolTip(Colorpicker_mt, boolean) end)
+			Utils.ProxyHover(newColor, newColor.Frame, "BackgroundTransparency", 0,1)
 			Library.Flags[Colorpicker_mt.Flag] = Colorpicker_mt
 			return Colorpicker_mt
 		end

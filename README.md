@@ -166,8 +166,9 @@ Bind:Destroy()
 ```lua
 Section:AddDropDown{
 	Name = <string>,
-	Default = <any>,
+	Default = <any | table>,
 	Options = <table>,
+	MultiOptions = <boolean>,
 	Callback = function(Value)
 		print(Value)
 	end

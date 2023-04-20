@@ -4,7 +4,7 @@ local Library = {
 	Sounds = true,
 }
 Library.__index = Library
-_G.Version = "1T"
+_G.Version = "1U"
 --setclipboard(_G.Version)
 
 local UserInputService = game:GetService("UserInputService")
@@ -787,8 +787,9 @@ function Library:Window(Table)
 		--Dropdown
 		function Section_mt:AddDropdown(Table)
 			local Dropdown_mt = setmetatable({
-				Name = Table.Name or Table.Default or "Dropdown",
+				Name = Table.Name or "Dropdown",
 				Options = Table.Options or {},
+				MultiOptions = Table.MultiOptions or false,
 				Image = Table.Image or "rbxassetid://7733717447",
 				Flag = Table.Flag or #Elements,
 				TextColor = Table.TextColor or Color3.fromRGB(200,200,200),
@@ -811,7 +812,11 @@ function Library:Window(Table)
 			Options.Name = Dropdown_mt.Name
 			local Input = newdrop.Frame.Textbox
 			local Button = newdrop.Frame.Icon
-
+			
+			if Dropdown_mt.MultiOptions and typeof(Dropdown_mt.Value) ~= "table" then
+				Dropdown_mt.Value = {Dropdown_mt.Value}
+			end
+			
 			table.insert(Elements, newdrop) table.insert(Elements, Options)
 
 			Button.Activated:Connect(function()
@@ -830,17 +835,25 @@ function Library:Window(Table)
 					end
 				end
 			end)
+			local toDisplay = {}
 			local function OnActivate(Option)
 				if Option ~= false then
 					if Index(Dropdown_mt.Options, Option) then
 						local x,y = pcall(function()
+							if not table.find(toDisplay, Option) and Dropdown_mt.MultiOptions then
+								table.insert(toDisplay, Option)
+							elseif Dropdown_mt.MultiOptions then
+								table.remove(toDisplay, table.find(toDisplay, Option)) return
+							else
+								toDisplay = {Option}
+							end
 							Dropdown_mt.Value = Option
 							Dropdown_mt.Callback(Option)
 							if Table.Flag and Window.Saves.Enabled == true then
 								Window:Save()
 							end
 						end)
-						if x then Input.Text = tostring('<font color="rgb(150,150,150)">'.. Dropdown_mt.Name ..'</font>, ' .. Option or Option.Name) else Library:Warn(y) end
+						if x then Input.Text = tostring('<font color="rgb(150,150,150)">'.. Dropdown_mt.Name ..'</font> ' .. table.concat(toDisplay, ", ")--[[or Option.Name]]) else Library:Warn(y) end
 					else
 						OnActivate(Dropdown_mt.Value)
 						Library:Warn("'" .. Input.PlaceholderText .. "' " .. tostring(Option) .. " is not an available option to set")
@@ -857,8 +870,16 @@ function Library:Window(Table)
 				Tween(Options, "Size",  UDim2.new(1,0,0, Dropdown_Options.AbsoluteSize.Y))
 			end)
 			Input.FocusLost:Connect(function(enterPressed)
-				if not enterPressed then return end
-				OnActivate(Input.Text)
+				if not enterPressed then 
+					Input.Text = tostring('<font color="rgb(150,150,150)">'.. Dropdown_mt.Name ..'</font> ' .. table.concat(toDisplay, ", "))
+					for i, v in pairs(Options.Frame.Dropdown_Options:GetChildren()) do
+						if v:IsA("Frame") then
+							v.Visible = true
+						end
+					end
+				else
+					OnActivate(Input.Text)
+				end	
 			end)
 			Input.Changed:Connect(function()
 				local Search = string.lower(Input.Text)
@@ -879,7 +900,14 @@ function Library:Window(Table)
 			end)
 
 			function Dropdown_mt:Set(Option)
-				OnActivate(Option)
+				if Dropdown_mt.MultiOptions then
+					for i, v in pairs(Option) do
+						OnActivate(v)
+					end
+				else
+					OnActivate(Option)
+				end
+				
 			end
 			function Dropdown_mt:Remove(Option)
 				if Index(Dropdown_mt.Options, Option) then
@@ -900,8 +928,17 @@ function Library:Window(Table)
 				newOp.Text.Text = tostring(v)
 				newOp.Text.Activated:Connect(function()
 					OnActivate(v)
+					if table.find(toDisplay,v) and Dropdown_mt.MultiOptions then
+						Tween(newOp.Text, "TextColor3", Color3.fromRGB(85, 170, 255))
+					else
+						Tween(newOp.Text, "TextColor3", Color3.fromRGB(85, 170, 255))
+						wait(0.6)
+						Tween(newOp.Text, "TextColor3", Color3.fromRGB(150,150,150))
+					end
+					
 				end)
-				Utils.ProxyHover(newOp, newOp.Text, "TextColor3", Color3.fromRGB(200,200,200), Color3.fromRGB(150,150,150))
+				--Utils.ProxyHover(newOp, newOp.Text, "TextColor3", Color3.fromRGB(200,200,200), Color3.fromRGB(150,150,150))
+				Utils.ProxyHover(newOp, newOp.Text, "TextTransparency", 0,0.25)
 			end
 			function Dropdown_mt:Refresh(List, clear)
 				if clear then
